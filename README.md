@@ -1,6 +1,5 @@
 # nativescript-orientation
-A system that deals with screen orientation in a awesomely automatic fashion.
-
+A NativeScript plugin to deal with Declarative UI and Screen Orientation
 
 ## License
 
