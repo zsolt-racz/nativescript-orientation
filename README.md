@@ -5,6 +5,10 @@ A NativeScript plugin to deal with Declarative UI and Screen Orientation
 
 This is released under the MIT License, meaning you are free to include this in any type of program -- However for entities that need a support contract, changes, enhancements and/or a commercial license please contact me (nathan@master-technology.com).
 
+## Sample Snapshot
+![Sample1](docs/orientation1.gif)
+Thanks to TJ VanToll for the awesome animated gif.
+ 
 
 ## Installation 
 
