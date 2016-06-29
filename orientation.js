@@ -5,7 +5,7 @@
  * I do contract work in most languages, so let me solve your problems!
  *
  * Any questions please feel free to email me or put a issue up on the github repo
- * Version 0.0.2                                      Nathan@master-technology.com
+ * Version 0.0.4                                      Nathan@master-technology.com
  *********************************************************************************/
 "use strict";
 
@@ -17,7 +17,11 @@ var view = require('ui/core/view');
 var enums = require('ui/enums');
 var frame = require('ui/frame');
 var Page = require('ui/page').Page;
+
+// Load the helper plugins
 require('nativescript-globalevents');
+require('nativescript-dom');
+
 
 /**
  * Helper function hooked to the Application to get the current orientation
@@ -33,7 +37,7 @@ if (global.android) {
                 return false;
         }
     };
-} else if (global.ios || global.NSObject) {
+} else if (global.NSObject && global.UIDevice) {
     application.getOrientation = function () {
         switch (UIDevice.currentDevice().orientation) {
             case UIDeviceOrientation.UIDeviceOrientationLandscapeRight:
@@ -71,24 +75,20 @@ var setOrientation = function(args) {
 
     if (currentPage) {
         var isLandscape = application.getOrientation() === enums.DeviceOrientation.landscape;
-        var data = currentPage.cssClass || '';
-        // If the user is using nativescript-dom, then use the NS-dom methods as faster and better
-        if (currentPage.classList) {
-            currentPage.classList.toggle('landscape', isLandscape);
-        } else {
-            // Quick and dirty landscape adder/remover
-            if (isLandscape) {
-                if (data.indexOf('landscape') === -1) {
-                    if (data.length) {
-                        currentPage.cssClass = data + ' landscape';
-                    } else {
-                        currentPage.cssClass = 'landscape';
-                    }
-                }
-            } else {
-                currentPage.cssClass = data.replace(/landscape/g, '').trim();
+
+        currentPage.classList.toggle('landscape', isLandscape);
+
+        // Unfortunately there is a bug in the NS CSS parser, so we have to work around it
+            if (currentPage.classList.contains('android')) {
+                currentPage.classList.toggle('android.landscape', isLandscape);
+            } else if (currentPage.classList.contains('ios')) {
+                currentPage.classList.toggle('ios.landscape', isLandscape);
+            } else if (currentPage.classList.contains('windows')) {
+                currentPage.classList.toggle('windows.landscape', isLandscape);
             }
-        }
+        // --- End NS Bug Patch ---
+
+
 
         currentPage._refreshCss();
         currentPage.style._resetCssValues();

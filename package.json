@@ -1,6 +1,6 @@
 {
   "name": "nativescript-orientation",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A NativeScript plugin to deal with Declarative UI and Screen Orientation",
   "main": "orientation.js",
   "nativescript": {
@@ -14,7 +14,8 @@
     "url": "https://github.com/nathanaela/nativescript-orientation.git"
   },
   "dependencies": {
-    "nativescript-globalevents": "^1.1.0"
+    "nativescript-globalevents": "^1.1.0",
+    "nativescript-dom": "^1.0.0"
   },
   "keywords": [
     "NativeScript", "orientation", "landscape", "ios", "android"
