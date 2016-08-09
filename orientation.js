@@ -5,7 +5,7 @@
  * I do contract work in most languages, so let me solve your problems!
  *
  * Any questions please feel free to email me or put a issue up on the github repo
- * Version 0.0.4                                      Nathan@master-technology.com
+ * Version 0.0.5                                      Nathan@master-technology.com
  *********************************************************************************/
 "use strict";
 
@@ -71,6 +71,9 @@ function resetChildrenRefreshes(child)
  * @param args
  */
 var setOrientation = function(args) {
+
+    // If the topmost frame doesn't exist we can't do anything...
+    if (!frame.topmost()) { return; }
     var currentPage = frame.topmost().currentPage;
 
     if (currentPage) {
@@ -97,7 +100,7 @@ var setOrientation = function(args) {
             view.eachDescendant(currentPage, resetChildrenRefreshes);
         }
         if (currentPage.exports && typeof currentPage.exports.orientation === "function") {
-            currentPage.exports.orientation({landscape: isLandscape, page: currentPage});
+            currentPage.exports.orientation({landscape: isLandscape, page: currentPage, object: currentPage});
         }
     }
 };
