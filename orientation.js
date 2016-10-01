@@ -5,7 +5,7 @@
  * I do contract work in most languages, so let me solve your problems!
  *
  * Any questions please feel free to email me or put a issue up on the github repo
- * Version 1.5.0                                      Nathan@master-technology.com
+ * Version 1.5.1                                      Nathan@master-technology.com
  *********************************************************************************/
 "use strict";
 
@@ -18,6 +18,8 @@ var enums = require('ui/enums');
 var frame = require('ui/frame');
 var Page = require('ui/page').Page;
 var utils = require('utils/utils');
+
+var types = require('utils/types');
 
 // Load the helper plugins
 require('nativescript-globalevents');
@@ -115,7 +117,9 @@ if (global.android) {
 
     setupiOSController();
     orientation.getOrientation = function () {
-        switch (UIDevice.currentDevice().orientation) {
+        var device = utils.ios.getter(UIDevice, UIDevice.currentDevice);
+      
+	    switch (device.orientation) {
             case UIDeviceOrientation.UIDeviceOrientationLandscapeRight:
             case UIDeviceOrientation.UIDeviceOrientationLandscapeLeft:
                 return enums.DeviceOrientation.landscape;
@@ -170,6 +174,7 @@ function findRootPrototype(source, name) {
    var proto = source;
     do {
         proto = Object.getPrototypeOf(proto);
+		console.log("Searching...");
     } while (proto !== null && !proto.hasOwnProperty(name) );
     return proto;
 }
@@ -178,26 +183,35 @@ function findRootPrototype(source, name) {
  * Sets up the iOS Controller configuration
  */
 function setupiOSController() {
-    try{
-        var app = application.ios._window.content.ios.controller;
-        var proto = findRootProto(app, "shouldAutorotate");
+	var curFrame = frame.topmost();
+	if (!curFrame) {
+		console.log("Not found", typeof frame);
+		setTimeout(setupiOSController, 100);
+		return;
+	} 
+	
+    try {
+	 
+        var app = curFrame.ios.controller;
+        var proto = findRootPrototype(app, "shouldAutorotate");
         if (proto ===  null) {
             console.log("Unable to find rotations system, disabling orientation system.");
             return;
         }
         Object.defineProperty(proto, "shouldAutorotate", {
             get: function() {
+				console.log("Should rotate", forceRotation, allowRotation);
                 return forceRotation || allowRotation;
             }, enumerable: true, configurable: true
-        });
-    } catch (err) {
-        console.log("Unable to setup Rotation");
+        }); 
+    } catch (err) { 
+        console.log("Unable to setup Rotation",err);
     }
 }
 
 /**
  * Helper function to look for children that have refresh (i.e. like ListView's) and call their refresh since the
- * CSS changes will probably impact them
+ * CSS changes will probsably impact them
  * @param child
  * @returns {boolean}
  */
