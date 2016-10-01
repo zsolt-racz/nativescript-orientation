@@ -174,7 +174,7 @@ function findRootPrototype(source, name) {
    var proto = source;
     do {
         proto = Object.getPrototypeOf(proto);
-		console.log("Searching...");
+		//console.log("Searching...");
     } while (proto !== null && !proto.hasOwnProperty(name) );
     return proto;
 }
@@ -185,7 +185,7 @@ function findRootPrototype(source, name) {
 function setupiOSController() {
 	var curFrame = frame.topmost();
 	if (!curFrame) {
-		console.log("Not found", typeof frame);
+		//console.log("Not found", typeof frame);
 		setTimeout(setupiOSController, 100);
 		return;
 	} 
@@ -200,7 +200,7 @@ function setupiOSController() {
         }
         Object.defineProperty(proto, "shouldAutorotate", {
             get: function() {
-				console.log("Should rotate", forceRotation, allowRotation);
+				//console.log("Should rotate", forceRotation, allowRotation);
                 return forceRotation || allowRotation;
             }, enumerable: true, configurable: true
         }); 
