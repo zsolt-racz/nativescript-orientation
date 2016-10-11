@@ -5,7 +5,7 @@
  * I do contract work in most languages, so let me solve your problems!
  *
  * Any questions please feel free to email me or put a issue up on the github repo
- * Version 1.5.1                                      Nathan@master-technology.com
+ * Version 1.5.2                                      Nathan@master-technology.com
  *********************************************************************************/
 "use strict";
 
@@ -147,8 +147,17 @@ if (global.android) {
         allowRotation = false; // disable rotations...
 
         forceRotation = true;
+        var currentOrientation = device.orientation;
+        // We have to swap to a different orientation FIRST, if the current orientation matches
+        if (newOrientation === currentOrientation) {
+            var tempOrientation = newOrientation-1;
+            if (tempOrientation < 1) { tempOrientation += 2; }
+            device.setValueForKey(tempOrientation, "orientation");
+        }
         device.setValueForKey(newOrientation, "orientation");
         forceRotation = false;
+
+
         if (animation === false) {
             UIView.setAnimationsEnabled(true);
         }
