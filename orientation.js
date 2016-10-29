@@ -5,7 +5,7 @@
  * I do contract work in most languages, so let me solve your problems!
  *
  * Any questions please feel free to email me or put a issue up on the github repo
- * Version 1.5.2                                      Nathan@master-technology.com
+ * Version 1.5.3                                      Nathan@master-technology.com
  *********************************************************************************/
 "use strict";
 
@@ -166,6 +166,22 @@ if (global.android) {
     orientation.enableRotation = function() { allowRotation = true; };
 
     orientation.disableRotation = function() { allowRotation = false; };
+
+    var resetLandscapedLock = false;
+    application.on('suspend', function() {
+       if (allowRotation === false && orientation.getOrientation() === 'landscape') {
+         allowRotation = true;
+         resetLandscapedLock = true;
+       } 
+    });
+    
+    application.on('resume', function() {
+       if (resetLandscapedLock) {
+         resetLandscapedLock = false;
+         orientation.setOrientation('landscape',false);
+       }
+    });
+    
 
 }
 
