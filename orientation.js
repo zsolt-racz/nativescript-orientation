@@ -5,7 +5,7 @@
  * I do contract work in most languages, so let me solve your problems!
  *
  * Any questions please feel free to email me or put a issue up on the github repo
- * Version 1.5.3                                      Nathan@master-technology.com
+ * Version 1.5.4                                      Nathan@master-technology.com
  *********************************************************************************/
 "use strict";
 
@@ -56,30 +56,30 @@ if (global.android) {
     };
 
     orientation.disableRotation = function() {
-            if (!application.android || !application.android.foregroundActivity) {
-                setTimeout(orientation.disableRotation, 100);
-                return;
-            }
+        if (!application.android || !application.android.foregroundActivity) {
+            setTimeout(orientation.disableRotation, 100);
+            return;
+        }
 
-            var activity = application.android.foregroundActivity;
-            var rotation = activity.getSystemService("window").getDefaultDisplay().getRotation();
-            var tempOrientation = activity.getResources().getConfiguration().orientation;
-            var orientation = 0;
-            switch(tempOrientation)
-            {
-                case /* Configuration.ORIENTATION_LANDSCAPE */ 2:
-                    if(rotation === 0 /* Surface.ROTATION_0 */ || rotation === 1 /* Surface.ROTATION_90 */ )
-                        orientation = 0; /* ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE; */
-                    else
-                        orientation = 8; /* ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE; */
-                    break;
-                case /* Configuration.ORIENTATION_PORTRAIT */ 1:
-                    if(rotation === 0 /* Surface.ROTATION_0 */ || rotation === 3 /* Surface.ROTATION_270 */)
-                        orientation = 1; /* ActivityInfo.SCREEN_ORIENTATION_PORTRAIT; */
-                    else
-                        orientation = 9; /* ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT; */
-            }
-            activity.setRequestedOrientation(orientation);
+        var activity = application.android.foregroundActivity;
+        var rotation = activity.getSystemService("window").getDefaultDisplay().getRotation();
+        var tempOrientation = activity.getResources().getConfiguration().orientation;
+        var orientation = 0;
+        switch(tempOrientation)
+        {
+            case /* Configuration.ORIENTATION_LANDSCAPE */ 2:
+                if(rotation === 0 /* Surface.ROTATION_0 */ || rotation === 1 /* Surface.ROTATION_90 */ )
+                    orientation = 0; /* ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE; */
+                else
+                    orientation = 8; /* ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE; */
+                break;
+            case /* Configuration.ORIENTATION_PORTRAIT */ 1:
+                if(rotation === 0 /* Surface.ROTATION_0 */ || rotation === 3 /* Surface.ROTATION_270 */)
+                    orientation = 1; /* ActivityInfo.SCREEN_ORIENTATION_PORTRAIT; */
+                else
+                    orientation = 9; /* ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT; */
+        }
+        activity.setRequestedOrientation(orientation);
     };
 
     orientation.setOrientation = function(value, animation) {
@@ -118,8 +118,8 @@ if (global.android) {
     setupiOSController();
     orientation.getOrientation = function () {
         var device = utils.ios.getter(UIDevice, UIDevice.currentDevice);
-      
-	    switch (device.orientation) {
+
+        switch (device.orientation) {
             case UIDeviceOrientation.UIDeviceOrientationLandscapeRight:
             case UIDeviceOrientation.UIDeviceOrientationLandscapeLeft:
                 return enums.DeviceOrientation.landscape;
@@ -169,24 +169,24 @@ if (global.android) {
 
     var resetLandscapedLock = false;
     application.on('suspend', function() {
-       if (allowRotation === false && orientation.getOrientation() === 'landscape') {
-         allowRotation = true;
-         resetLandscapedLock = true;
-       } 
+        if (allowRotation === false && orientation.getOrientation() === 'landscape') {
+            allowRotation = true;
+            resetLandscapedLock = true;
+        }
     });
-    
+
     application.on('resume', function() {
-       if (resetLandscapedLock) {
-         resetLandscapedLock = false;
-         orientation.setOrientation('landscape',false);
-       }
+        if (resetLandscapedLock) {
+            resetLandscapedLock = false;
+            orientation.setOrientation('landscape',false);
+        }
     });
-    
+
 
 }
 
-    // Depreciated; but supported for backwards compatibility
-    application.getOrientation = orientation.getOrientation;
+// Depreciated; but supported for backwards compatibility
+application.getOrientation = orientation.getOrientation;
 
 
 /**
@@ -196,10 +196,10 @@ if (global.android) {
  * @returns {*}
  */
 function findRootPrototype(source, name) {
-   var proto = source;
+    var proto = source;
     do {
         proto = Object.getPrototypeOf(proto);
-		//console.log("Searching...");
+        //console.log("Searching...");
     } while (proto !== null && !proto.hasOwnProperty(name) );
     return proto;
 }
@@ -208,15 +208,15 @@ function findRootPrototype(source, name) {
  * Sets up the iOS Controller configuration
  */
 function setupiOSController() {
-	var curFrame = frame.topmost();
-	if (!curFrame) {
-		//console.log("Not found", typeof frame);
-		setTimeout(setupiOSController, 100);
-		return;
-	} 
-	
+    var curFrame = frame.topmost();
+    if (!curFrame) {
+        //console.log("Not found", typeof frame);
+        setTimeout(setupiOSController, 100);
+        return;
+    }
+
     try {
-	 
+
         var app = curFrame.ios.controller;
         var proto = findRootPrototype(app, "shouldAutorotate");
         if (proto ===  null) {
@@ -225,11 +225,11 @@ function setupiOSController() {
         }
         Object.defineProperty(proto, "shouldAutorotate", {
             get: function() {
-				//console.log("Should rotate", forceRotation, allowRotation);
+                //console.log("Should rotate", forceRotation, allowRotation);
                 return forceRotation || allowRotation;
             }, enumerable: true, configurable: true
-        }); 
-    } catch (err) { 
+        });
+    } catch (err) {
         console.log("Unable to setup Rotation",err);
     }
 }
@@ -263,13 +263,25 @@ var handleOrientationChange = function(args) {
         currentPage.classList.toggle('landscape', isLandscape);
 
         // Unfortunately there is a bug in the NS CSS parser, so we have to work around it
-            if (currentPage.classList.contains('android')) {
-                currentPage.classList.toggle('android.landscape', isLandscape);
-            } else if (currentPage.classList.contains('ios')) {
-                currentPage.classList.toggle('ios.landscape', isLandscape);
-            } else if (currentPage.classList.contains('windows')) {
-                currentPage.classList.toggle('windows.landscape', isLandscape);
+        var i;
+        if (currentPage.classList.contains('android')) {
+            for (i=0;i<currentPage.classList.length;i++) {
+                if (currentPage.classList[i].indexOf('android') === 0) {
+                    if (currentPage.classList[i].indexOf('.') >= 0) { continue; }
+                    currentPage.classList.toggle(currentPage.classList[i]+".landscape", isLandscape);
+                }
             }
+        } else if (currentPage.classList.contains('ios')) {
+            for (i=0;i<currentPage.classList.length;i++) {
+                if (currentPage.classList[i].indexOf('ios') === 0) {
+                    if (currentPage.classList[i].indexOf('.') >= 0) { continue; }
+                    currentPage.classList.toggle(currentPage.classList[i]+".landscape", isLandscape);
+                }
+            }
+            //currentPage.classList.toggle('ios.landscape', isLandscape);
+        } else if (currentPage.classList.contains('windows')) {
+            currentPage.classList.toggle('windows.landscape', isLandscape);
+        }
         // --- End NS Bug Patch ---
 
 
