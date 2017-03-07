@@ -1,11 +1,11 @@
 /**********************************************************************************
- * (c) 2016, Master Technology
+ * (c) 2016-2017, Master Technology
  * Licensed under the MIT license or contact me for a Support or Commercial License
  *
  * I do contract work in most languages, so let me solve your problems!
  *
  * Any questions please feel free to email me or put a issue up on the github repo
- * Version 1.5.4                                      Nathan@master-technology.com
+ * Version 1.5.5                                      Nathan@master-technology.com
  *********************************************************************************/
 "use strict";
 
@@ -47,7 +47,7 @@ if (global.android) {
 
     orientation.enableRotation = function() {
         if (!application.android || !application.android.foregroundActivity) {
-            setTimeout(orientation.disableRotation, 100);
+            setTimeout(orientation.enableRotation, 100);
             return;
         }
 
@@ -64,22 +64,22 @@ if (global.android) {
         var activity = application.android.foregroundActivity;
         var rotation = activity.getSystemService("window").getDefaultDisplay().getRotation();
         var tempOrientation = activity.getResources().getConfiguration().orientation;
-        var orientation = 0;
+        var currentOrientation = 0;
         switch(tempOrientation)
         {
             case /* Configuration.ORIENTATION_LANDSCAPE */ 2:
                 if(rotation === 0 /* Surface.ROTATION_0 */ || rotation === 1 /* Surface.ROTATION_90 */ )
-                    orientation = 0; /* ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE; */
+                    currentOrientation = 0; /* ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE; */
                 else
-                    orientation = 8; /* ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE; */
+                    currentOrientation = 8; /* ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE; */
                 break;
             case /* Configuration.ORIENTATION_PORTRAIT */ 1:
                 if(rotation === 0 /* Surface.ROTATION_0 */ || rotation === 3 /* Surface.ROTATION_270 */)
-                    orientation = 1; /* ActivityInfo.SCREEN_ORIENTATION_PORTRAIT; */
+                    currentOrientation = 1; /* ActivityInfo.SCREEN_ORIENTATION_PORTRAIT; */
                 else
-                    orientation = 9; /* ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT; */
+                    currentOrientation = 9; /* ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT; */
         }
-        activity.setRequestedOrientation(orientation);
+        activity.setRequestedOrientation(currentOrientation);
     };
 
     orientation.setOrientation = function(value, animation) {
