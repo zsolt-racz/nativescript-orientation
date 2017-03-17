@@ -249,6 +249,51 @@ function resetChildrenRefreshes(child) {
 
 /**
  * Function that does the majority of the work
+ * @param page
+ * @param args
+ */
+var applyOrientationToPage = function(page, args){
+    var isLandscape = application.getOrientation() === enums.DeviceOrientation.landscape;
+
+    page.classList.toggle('landscape', isLandscape);
+
+    // Unfortunately there is a bug in the NS CSS parser, so we have to work around it
+    var i;
+    if (page.classList.contains('android')) {
+        for (i=0;i<page.classList.length;i++) {
+            if (page.classList[i].indexOf('android') === 0) {
+                if (page.classList[i].indexOf('.') >= 0) { continue; }
+                page.classList.toggle(page.classList[i]+".landscape", isLandscape);
+            }
+        }
+    } else if (page.classList.contains('ios')) {
+        for (i=0;i<page.classList.length;i++) {
+            if (page.classList[i].indexOf('ios') === 0) {
+                if (page.classList[i].indexOf('.') >= 0) { continue; }
+                page.classList.toggle(page.classList[i]+".landscape", isLandscape);
+            }
+        }
+        //currentPage.classList.toggle('ios.landscape', isLandscape);
+    } else if (page.classList.contains('windows')) {
+        page.classList.toggle('windows.landscape', isLandscape);
+    }
+    // --- End NS Bug Patch ---
+
+
+
+    page._refreshCss();
+    page.style._resetCssValues();
+    page._applyStyleFromScope();
+    if (args != null) {
+        view.eachDescendant(page, resetChildrenRefreshes);
+    }
+    if (page.exports && typeof page.exports.orientation === "function") {
+        page.exports.orientation({landscape: isLandscape, page: page, object: page});
+    }
+};
+
+/**
+ * Function that does the majority of the work
  * @param args
  */
 var handleOrientationChange = function(args) {
@@ -258,47 +303,20 @@ var handleOrientationChange = function(args) {
     var currentPage = frame.topmost().currentPage;
 
     if (currentPage) {
-        var isLandscape = application.getOrientation() === enums.DeviceOrientation.landscape;
-
-        currentPage.classList.toggle('landscape', isLandscape);
-
-        // Unfortunately there is a bug in the NS CSS parser, so we have to work around it
-        var i;
-        if (currentPage.classList.contains('android')) {
-            for (i=0;i<currentPage.classList.length;i++) {
-                if (currentPage.classList[i].indexOf('android') === 0) {
-                    if (currentPage.classList[i].indexOf('.') >= 0) { continue; }
-                    currentPage.classList.toggle(currentPage.classList[i]+".landscape", isLandscape);
-                }
-            }
-        } else if (currentPage.classList.contains('ios')) {
-            for (i=0;i<currentPage.classList.length;i++) {
-                if (currentPage.classList[i].indexOf('ios') === 0) {
-                    if (currentPage.classList[i].indexOf('.') >= 0) { continue; }
-                    currentPage.classList.toggle(currentPage.classList[i]+".landscape", isLandscape);
-                }
-            }
-            //currentPage.classList.toggle('ios.landscape', isLandscape);
-        } else if (currentPage.classList.contains('windows')) {
-            currentPage.classList.toggle('windows.landscape', isLandscape);
-        }
-        // --- End NS Bug Patch ---
-
-
-
-        currentPage._refreshCss();
-        currentPage.style._resetCssValues();
-        currentPage._applyStyleFromScope();
-        if (args != null) {
-            view.eachDescendant(currentPage, resetChildrenRefreshes);
-        }
-        if (currentPage.exports && typeof currentPage.exports.orientation === "function") {
-            currentPage.exports.orientation({landscape: isLandscape, page: currentPage, object: currentPage});
-        }
+        applyOrientationToPage(currentPage, args);
     }
 };
 
+var handleNavigatingTo = function(args){
+    var targetPage = args.object;
+
+    if(targetPage){
+        applyOrientationToPage(targetPage);
+    }
+
+};
+
 // Setup Events
-Page.on(Page.navigatedToEvent, handleOrientationChange);
+Page.on(Page.navigatingToEvent, handleNavigatingTo);
 application.on(application.orientationChangedEvent, handleOrientationChange);
 
