@@ -5,7 +5,7 @@
  * I do contract work in most languages, so let me solve your problems!
  *
  * Any questions please feel free to email me or put a issue up on the github repo
- * Version 1.5.5                                      Nathan@master-technology.com
+ * Version 1.6.0                                      Nathan@master-technology.com
  *********************************************************************************/
 "use strict";
 
@@ -280,7 +280,6 @@ var applyOrientationToPage = function(page, args){
     // --- End NS Bug Patch ---
 
 
-
     page._refreshCss();
     page.style._resetCssValues();
     page._applyStyleFromScope();
@@ -293,7 +292,7 @@ var applyOrientationToPage = function(page, args){
 };
 
 /**
- * Function that does the majority of the work
+ * This handles a Orientation change event
  * @param args
  */
 var handleOrientationChange = function(args) {

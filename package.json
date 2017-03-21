@@ -1,8 +1,8 @@
 {
   "name": "nativescript-orientation",
-  "version": "1.5.5",
+  "version": "1.6.0",
   "description": "A NativeScript plugin to deal with Declarative UI and Screen Orientation",
-  "main": "orientation.js",
+  "main": "orientation",
   "nativescript": {
 	"platforms": {
 		"android": "2.3.0",
